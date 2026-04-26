@@ -30,8 +30,10 @@ jobs:
     outputs:
       new-release-published: ${{ steps.semantic.outputs.new-release-published }}
       new-release-version: ${{ steps.semantic.outputs.new-release-version }}
-    # Only run on push to master or workflow is manually triggered
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    # Only run on push to master or workflow is manually triggered, but skip if commit message contains [skip ci]
+    if: |
+      (github.event_name == 'workflow_dispatch' || github.event_name == 'push') &&
+      !contains(github.event.head_commit.message, '[skip ci]')
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
