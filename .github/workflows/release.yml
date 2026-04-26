@@ -5,11 +5,9 @@ name: Release
 # create git tags, and publish GitHub releases.
 
 on:
-  pull_request:
+  push:
     branches:
       - master
-    types:
-      - closed
   workflow_dispatch:
     inputs:
       dry-run:
@@ -29,8 +27,11 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
-    # Only run when PR is merged or workflow is manually triggered
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    outputs:
+      new-release-published: ${{ steps.semantic.outputs.new-release-published }}
+      new-release-version: ${{ steps.semantic.outputs.new-release-version }}
+    # Only run on push to master or workflow is manually triggered
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -70,6 +71,7 @@ jobs:
           npx semantic-release --dry-run
 
       - name: Run semantic-release
+        id: semantic
         if: github.event.inputs.dry-run != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -108,7 +110,7 @@ jobs:
     name: Trigger NPM Publish
     needs: release
     runs-on: ubuntu-latest
-    if: github.event.inputs.dry-run != 'true'
+    if: github.event.inputs.dry-run != 'true' && needs.release.outputs.new-release-published == 'true'
     steps:
       - name: Trigger use-shared-publish workflow
         uses: actions/github-script@v7
