@@ -86,10 +86,10 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Released version: $VERSION"
 
-      - name: Summary
-        if: github.event.inputs.dry-run != 'true' && steps.version.outputs.VERSION
+      - name: Summary - Release Created
+        if: github.event.inputs.dry-run != 'true' && steps.semantic.outputs.new-release-published == 'true'
         run: |
-          VERSION="${{ steps.version.outputs.VERSION }}"
+          VERSION="${{ steps.semantic.outputs.new-release-version }}"
           echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Version**: v$VERSION" >> $GITHUB_STEP_SUMMARY
@@ -104,6 +104,18 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
           echo "- ⏳ NPM Publish workflow will trigger automatically" >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary - No Release
+        if: github.event.inputs.dry-run != 'true' && steps.semantic.outputs.new-release-published != 'true'
+        run: |
+          echo "## No Release Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No new version was released because:" >> $GITHUB_STEP_SUMMARY
+          echo "- No commits with release-triggering types (feat, fix, perf, revert, breaking changes)" >> $GITHUB_STEP_SUMMARY
+          echo "- Or all commits since last release are non-release types (chore, docs, style, refactor, test)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Current version" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: $(jq -r '.version' package.json)" >> $GITHUB_STEP_SUMMARY
 
   # Trigger NPM publish workflow after release is complete
   publish:
