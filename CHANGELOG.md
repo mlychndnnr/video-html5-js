@@ -1,3 +1,10 @@
+## [4.1.3](https://github.com/mlychndnnr/video-html5-js/compare/v4.1.2...v4.1.3) (2026-04-26)
+
+
+### Bug Fixes
+
+* sample updated ([74ee540](https://github.com/mlychndnnr/video-html5-js/commit/74ee540365f6a45beb7dcbeae0f157df5eaf6bcc))
+
 ## [4.1.2](https://github.com/mlychndnnr/video-html5-js/compare/v4.1.1...v4.1.2) (2026-04-26)
 
 
