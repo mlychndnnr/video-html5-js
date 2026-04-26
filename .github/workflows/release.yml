@@ -76,7 +76,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release
+          npx semantic-release > semantic-output.log 2>&1 || true
+          cat semantic-output.log
+
+          # Check if release was published
+          if grep -q "Published release" semantic-output.log || grep -q "Release published" semantic-output.log; then
+            echo "new-release-published=true" >> $GITHUB_OUTPUT
+            # Extract version from package.json after semantic-release
+            NEW_VERSION=$(jq -r '.version' package.json)
+            echo "new-release-version=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "Release published: v$NEW_VERSION"
+          else
+            echo "new-release-published=false" >> $GITHUB_OUTPUT
+            echo "No release published"
+          fi
 
       - name: Get released version
         id: version
