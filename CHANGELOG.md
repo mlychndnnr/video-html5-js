@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/mlychndnnr/video-html5-js/compare/v4.1.3...v4.2.0) (2026-04-26)
+
+
+### Features
+
+* Docker removed ([c871c1a](https://github.com/mlychndnnr/video-html5-js/commit/c871c1aa1f25e40b1f10d295e859e31de8b6be8c))
+
 ## [4.1.3](https://github.com/mlychndnnr/video-html5-js/compare/v4.1.2...v4.1.3) (2026-04-26)
 
 
